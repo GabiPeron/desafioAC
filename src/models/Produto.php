@@ -33,7 +33,17 @@ class Produto {
 
         $query = 
         '
-        SELECT * FROM produtos WHERE deleted IS FALSE;
+        SELECT produtos.id,
+               produtos.descricao,
+               produtos.valor,
+               produtos.estoque,
+               produtos.ultima_venda,
+               SUM(vendas.valor_total) 
+          FROM produtos
+     LEFT JOIN vendas
+            ON vendas.produto_id = produtos.id 
+         WHERE deleted IS FALSE
+      GROUP BY produtos.id;
         ';
 
         $conexao->setConexao();
@@ -83,6 +93,38 @@ class Produto {
         $conexao->closeConexao();
 
         return $produto;
+    }
+
+    public static function count() {
+        $conexao = new Conexao('desafioac', 'localhost', 'root', 'root');
+
+        $query = 'SELECT COUNT(id) FROM produtos';
+
+        $conexao->setConexao();
+
+        $conexao->query($query);
+
+        $produto = $conexao->getArrayResults();
+
+        $conexao->closeConexao();
+
+        return $produto;
+    }
+
+    public static function countVendas() {
+        $conexao = new Conexao('desafioac', 'localhost', 'root', 'root');
+
+        $query = 'SELECT COUNT(id) FROM vendas';
+
+        $conexao->setConexao();
+
+        $conexao->query($query);
+
+        $vendas = $conexao->getArrayResults();
+
+        $conexao->closeConexao();
+
+        return $vendas;
     }
 
     public function update($id) {

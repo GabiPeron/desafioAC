@@ -1,3 +1,14 @@
+<?php
+session_start();
+
+include './src/models/Venda.php';
+include './src/models/Produto.php';
+include './src/database/Conexao.php';
+
+$produtos = Produto::all();
+$vendas = Venda::all();
+?>
+
 <!doctype html>
 <html lang="en" dir="ltr">
   <head>
@@ -35,6 +46,18 @@
     <script src="./assets/plugins/maps-google/plugin.js"></script>
     <!-- Input Mask Plugin -->
     <script src="./assets/plugins/input-mask/plugin.js"></script>
+
+    <script>
+      function setValorUnitario(select) {
+        document.querySelector('#valorUnitario').value = select.options[select.selectedIndex].getAttribute('data-valor');
+
+        setValorTotal();
+      }
+
+      function setValorTotal() {
+        document.querySelector('#valorTotal').value = (document.querySelector('#quantidade').value * document.querySelector('#valorUnitario').value);
+      }
+    </script>
   </head>
   <body class="">
     <div class="page">
@@ -76,16 +99,16 @@
               <div class="col-lg order-lg-first">
                 <ul class="nav nav-tabs border-0 flex-column flex-lg-row">
                   <li class="nav-item">
-                    <a href="./index.html" class="nav-link"><i class="fe fe-home"></i> Home</a>
+                    <a href="./index.php" class="nav-link"><i class="fe fe-home"></i> Home</a>
                   </li>
-		  <li class="nav-item">
-                    <a href="./produtos.html" class="nav-link"><i class="fe fe-package"></i> Produtos</a>
+		              <li class="nav-item">
+                    <a href="./produtos.php" class="nav-link"><i class="fe fe-package"></i> Produtos</a>
                   </li>
-		  <li class="nav-item">
-                    <a href="./form-produto.html" class="nav-link active"><i class="fe fe-dollar-sign"></i> Venda</a>
+		              <li class="nav-item">
+                    <a href="./form-produto.php" class="nav-link active"><i class="fe fe-dollar-sign"></i> Venda</a>
                   </li>
-		  <li class="nav-item">
-                    <a href="./produtos-excluidos.html" class="nav-link"><i class="fe fe-trash"></i> Lixeira</a>
+		              <li class="nav-item">
+                    <a href="./produtos-excluidos.php" class="nav-link"><i class="fe fe-trash"></i> Lixeira</a>
                   </li>
                 </ul>
               </div>
@@ -96,25 +119,36 @@
           <div class="container">
             <div class="row">              
             <div class="col-lg-12">
-              <form class="card">
+              <form class="card" method="POST" action="src/controllers/VendaController.php">
+                <?php
+                  if ($_SESSION['success']) {
+                    echo 
+                    '
+                    <div class="alert alert-success" role="alert">
+                      Venda inserida com sucesso!
+                    </div>
+                    ';
+
+                    $_SESSION['success'] = false;
+                  }
+                ?>
                 <div class="card-body">
                   <h3 class="card-title">Realizar venda de um produto</h3>
                   <div class="row">
-		    <div class="col-md-12">
+		                <div class="col-md-12">
                       <div class="form-group">
                         <label class="form-label">Produto</label>
-                        <select class="form-control custom-select">
-                          <option value="">Batata</option>
-                          <option value="">Arroz</option>
-                          <option value="">Feijão</option>
-                          <option value="">Coca-cola 2LT</option>
+                        <select name="produto" onchange="setValorUnitario(this)" class="form-control custom-select">
+                          <?php foreach($produtos as $produto): ?>
+                            <option data-valor="<?php echo $produto['valor'];?>" value="<?php echo $produto['id'];?>"><?php echo $produto['descricao'];?></option>
+                          <?php endforeach; ?>
                         </select>
                       </div>
                     </div>
                     <div class="col-sm-6 col-md-4">
                       <div class="form-group">
                         <label class="form-label">Quantidade</label>
-                        <input type="number" class="form-control" placeholder="Digite aqui a quantidade">
+                        <input required onchange="setValorTotal()" id="quantidade" name="quantidade" type="number" class="form-control" placeholder="Digite aqui a quantidade">
                       </div>
                     </div>
                     <div class="col-sm-6 col-md-4">
@@ -124,7 +158,7 @@
                           <span class="input-group-prepend">
                             <span class="input-group-text">R$</span>
                           </span>
-                          <input type="text" class="form-control text-right" aria-label="Valor">                          
+                          <input required onchange="setValorTotal()" id="valorUnitario" name="valorUnitario" type="number" class="form-control text-right" aria-label="Valor">                          
                         </div>
                       </div>
                     </div>
@@ -135,7 +169,7 @@
                           <span class="input-group-prepend">
                             <span class="input-group-text">R$</span>
                           </span>
-                          <input type="text" class="form-control text-right" aria-label="Valor" disabled="disabled" title="Este campo não pode ser alterado">                          
+                          <input id="valorTotal" name="valorTotal" class="form-control text-right" aria-label="Valor" disabled="disabled" title="Este campo não pode ser alterado">                          
                         </div>
                       </div>
                     </div>
@@ -144,21 +178,21 @@
                         <div class="form-label">&nbsp;</div>
                         <div class="custom-controls-stacked">
                           <label class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" name="example-checkbox1" value="option1" checked>
+                            <input type="checkbox" class="custom-control-input" name="atualizar" value="option1" checked>
                             <span class="custom-control-label">Atualizar valor unitário do produto</span>
                           </label>
-			</div>
+			              </div>
                       </div>
                     </div>                    
                   </div>
                 </div>
                 <div class="card-footer text-left" style="display: flex; justify-content: space-between">
-		  <div>
-		    <a href="./produtos.html" class="btn btn-secondary">Voltar para produtos</a>
-		  </div>
-		  <div>
-		    <button type="submit" class="btn btn-primary">Confirmar</button>
-		  </div>                                    
+                  <div>
+                    <a href="./produtos.php" class="btn btn-secondary">Voltar para produtos</a>
+                  </div>
+                  <div>
+                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                  </div>                                    
                 </div>                
               </form>
             </div>
@@ -185,32 +219,15 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td><span class="text-muted">2</span></td>
-                          <td>Batata</td>
-                          <td>
-                            2
-                          </td>
-                          <td>
-                            R$ 1,50
-                          </td>
-                          <td>
-                            R$ 3,00
-                          </td>                          
-                        </tr>
-                        <tr>
-                          <td><span class="text-muted">1</span></td>
-                          <td>Batata</td>
-                          <td>
-                            10
-                          </td>
-                          <td>
-                            R$ 1,50
-                          </td>
-                          <td>
-                            R$ 15,00
-                          </td>                          
-                        </tr>
+                        <?php foreach($vendas as $venda): ?>
+                          <tr>
+                            <td><span class="text-muted"><?php echo $venda['id']; ?></span></td>
+                            <td><?php echo $venda['descricao']; ?></td>
+                            <td><?php echo $venda['quantidade']; ?></td>
+                            <td>R$ <?php echo $venda['valor_unitario']; ?></td>
+                            <td>R$ <?php echo $venda['valor_total']; ?></td>
+                          </tr>
+                        <?php endforeach; ?>
                       </tbody>
                     </table>
                   </div>
