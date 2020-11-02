@@ -95,7 +95,7 @@ $produto = Produto::find($_GET['produto'])[0];
                     <a href="./form-venda.html" class="nav-link"><i class="fe fe-dollar-sign"></i> Venda</a>
                   </li>
 		              <li class="nav-item">
-                    <a href="./produtos-excluidos.html" class="nav-link"><i class="fe fe-trash"></i> Lixeira</a>
+                    <a href="./produtos-excluidos.php" class="nav-link"><i class="fe fe-trash"></i> Lixeira</a>
                   </li>
                 </ul>
               </div>
@@ -149,7 +149,7 @@ $produto = Produto::find($_GET['produto'])[0];
                           <span class="input-group-prepend">
                             <span class="input-group-text">R$</span>
                           </span>
-                          <input name="valor" type="text" class="form-control text-right" aria-label="Valor" value="<?php echo $produto['valor']; ?>">                          
+                          <input name="valor" type="number" class="form-control text-right" aria-label="Valor" value="<?php echo $produto['valor']; ?>">                          
                         </div>
                       </div>
                     </div>                    

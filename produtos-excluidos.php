@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+include './src/models/Produto.php';
+include './src/database/Conexao.php';
+
+$produtos = Produto::deleted();
+?>
+
 <!doctype html>
 <html lang="en" dir="ltr">
   <head>
@@ -78,14 +87,14 @@
                   <li class="nav-item">
                     <a href="./index.html" class="nav-link"><i class="fe fe-home"></i> Home</a>
                   </li>
-		  <li class="nav-item">
-                    <a href="./produtos.html" class="nav-link"><i class="fe fe-package"></i> Produtos</a>
+		              <li class="nav-item">
+                    <a href="./produtos.php" class="nav-link"><i class="fe fe-package"></i> Produtos</a>
                   </li>
-		  <li class="nav-item">
-                    <a href="./form-venda.html" class="nav-link"><i class="fe fe-dollar-sign"></i> Venda</a>
+		              <li class="nav-item">
+                    <a href="./form-venda.php" class="nav-link"><i class="fe fe-dollar-sign"></i> Venda</a>
                   </li>
-		  <li class="nav-item">
-                    <a href="./produtos-excluidos.html" class="nav-link active"><i class="fe fe-trash"></i> Lixeira</a>
+		              <li class="nav-item">
+                    <a href="./produtos-excluidos.php" class="nav-link active"><i class="fe fe-trash"></i> Lixeira</a>
                   </li>
                 </ul>
               </div>
@@ -97,6 +106,18 @@
             <div class="row row-cards row-deck">
               <div class="col-12">
                 <div class="card">
+                  <?php
+                    if ($_SESSION['success']) {
+                      echo 
+                      '
+                      <div class="alert alert-success" role="alert">
+                        Produto restaurado com sucesso!
+                      </div>
+                      ';
+
+                      $_SESSION['success'] = false;
+                    }
+                  ?>
                   <div class="card-header">
                     <h3 class="card-title">Produtos excluídos</h3>		      
                   </div>
@@ -112,36 +133,22 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td><span class="text-muted">1</span></td>
-                          <td>Batata rosa</td>
-                          <td>
-                            R$ 1,50
-                          </td>
-                          <td>
-                            2000
-                          </td>                                                
-                          <td>
-                            <a class="icon" href="#">
-                              <i class="fe fe-refresh-ccw"></i>
-                            </a>			    
-                          </td>                          
-                        </tr>
-                        <tr>
-                          <td><span class="text-muted">2</span></td>
-                          <td>Farinha</td>
-                          <td>
-                            R$ 7,50
-                          </td>
-                          <td>
-                            200
-                          </td>                       
-                          <td>
-                            <a class="icon" href="#">
-                              <i class="fe fe-refresh-ccw"></i>
-                            </a>					    
-                          </td>                          
-                        </tr>
+                        <?php foreach($produtos as $produto): ?>
+                          <tr>
+                            <td><span class="text-muted"><?php echo $produto['id']; ?></span></td>
+                            <td><?php echo $produto['descricao']; ?></td>
+                            <td>R$ <?php echo $produto['valor']; ?></td>
+                            <td><?php echo $produto['estoque']; ?></td>
+                            <td>
+                              <form method="POST" action="./src/controllers/ProdutoController.php?produto=<?php echo $produto['id']; ?>">
+                                <input type="hidden" name="method" value="RESTORE"/>
+                                <a onclick="this.closest('form').submit();" class="icon" href="javascript:void(0)">
+                                  <i class="fe fe-refresh-ccw"></i>
+                                </a>			 
+                              </form>				    
+                            </td>    
+                          </tr>
+                        <?php endforeach; ?>
                       </tbody>
                     </table>
                   </div>

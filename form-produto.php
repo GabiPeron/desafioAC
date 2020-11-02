@@ -89,7 +89,7 @@
                     <a href="./form-venda.html" class="nav-link"><i class="fe fe-dollar-sign"></i> Venda</a>
                   </li>
 		              <li class="nav-item">
-                    <a href="./produtos-excluidos.html" class="nav-link"><i class="fe fe-trash"></i> Lixeira</a>
+                    <a href="./produtos-excluidos.php" class="nav-link"><i class="fe fe-trash"></i> Lixeira</a>
                   </li>
                 </ul>
               </div>
@@ -142,19 +142,19 @@
                           <span class="input-group-prepend">
                             <span class="input-group-text">R$</span>
                           </span>
-                          <input required type="text" name="valor" class="form-control text-right" aria-label="Valor">                         
+                          <input required type="number" name="valor" class="form-control text-right" aria-label="Valor">                         
                         </div>
                       </div>
                     </div>                    
                   </div>
                 </div>
                 <div class="card-footer text-left" style="display: flex; justify-content: space-between">
-		  <div>
-		    <a href="./produtos.html" class="btn btn-secondary">Voltar para produtos</a>
-		  </div>
-		  <div>
-		    <button type="submit" class="btn btn-primary">Confirmar</button>
-		  </div>                                    
+                  <div>
+                    <a href="./produtos.php" class="btn btn-secondary">Voltar para produtos</a>
+                  </div>
+                  <div>
+                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                  </div>                                    
                 </div>                
               </form>
             </div>

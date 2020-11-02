@@ -33,7 +33,26 @@ class Produto {
 
         $query = 
         '
-        SELECT * FROM produtos;
+        SELECT * FROM produtos WHERE deleted IS FALSE;
+        ';
+
+        $conexao->setConexao();
+
+        $conexao->query($query);
+
+        $produtos = $conexao->getArrayResults();
+
+        $conexao->closeConexao();
+
+        return $produtos;
+    }
+
+    public static function deleted() {
+        $conexao = new Conexao('desafioac', 'localhost', 'root', 'root');
+
+        $query = 
+        '
+        SELECT * FROM produtos WHERE deleted IS TRUE;
         ';
 
         $conexao->setConexao();
@@ -75,7 +94,45 @@ class Produto {
         SET descricao = "'.$this->descricao.'", estoque = '.$this->estoque.', codigo = '.$this->codigo.', valor = '.$this->valor.'
         WHERE id = '.$id.';
         ';
-        
+
+        $conexao->setConexao();
+
+        $conexao->query($query);
+
+        $conexao->closeConexao();
+
+        return true;
+    }
+
+    public static function delete($id) {
+        $conexao = new Conexao('desafioac', 'localhost', 'root', 'root');
+
+        $query = 
+        '
+        UPDATE produtos
+        SET deleted = true
+        WHERE id = '.$id.';
+        ';
+
+        $conexao->setConexao();
+
+        $conexao->query($query);
+
+        $conexao->closeConexao();
+
+        return true;
+    }
+
+    public static function restore($id) {
+        $conexao = new Conexao('desafioac', 'localhost', 'root', 'root');
+
+        $query = 
+        '
+        UPDATE produtos
+        SET deleted = false
+        WHERE id = '.$id.';
+        ';
+
         $conexao->setConexao();
 
         $conexao->query($query);

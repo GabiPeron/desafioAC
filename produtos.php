@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 include './src/models/Produto.php';
 include './src/database/Conexao.php';
@@ -93,7 +94,7 @@ $produtos = Produto::all();
                     <a href="./form-venda.html" class="nav-link"><i class="fe fe-dollar-sign"></i> Venda</a>
                   </li>
 		              <li class="nav-item">
-                    <a href="./produtos-excluidos.html" class="nav-link"><i class="fe fe-trash"></i> Lixeira</a>
+                    <a href="./produtos-excluidos.php" class="nav-link"><i class="fe fe-trash"></i> Lixeira</a>
                   </li>
                 </ul>
               </div>
@@ -105,6 +106,18 @@ $produtos = Produto::all();
             <div class="row row-cards row-deck">
               <div class="col-12">
                 <div class="card">
+                  <?php
+                    if ($_SESSION['success']) {
+                      echo 
+                      '
+                      <div class="alert alert-success" role="alert">
+                        Produto excluído com sucesso!
+                      </div>
+                      ';
+
+                      $_SESSION['success'] = false;
+                    }
+                  ?>
                   <div class="card-header">
                     <h3 class="card-title">Produtos</h3>
                     <div class="card-options">
@@ -140,9 +153,12 @@ $produtos = Produto::all();
                               </a>			    
                             </td>
                             <td>
-                              <a class="icon" href="javascript:void(0)">
-                                <i class="fe fe-trash"></i>
-                              </a>			    
+                              <form method="POST" action="./src/controllers/ProdutoController.php?produto=<?php echo $produto['id']; ?>">
+                                <input type="hidden" name="method" value="DELETE"/>
+                                <a onclick="this.closest('form').submit();" class="icon" href="javascript:void(0)">
+                                  <i class="fe fe-trash"></i>
+                                </a>			 
+                              </form>
                             </td>
                           </tr>
                         <?php endforeach; ?>

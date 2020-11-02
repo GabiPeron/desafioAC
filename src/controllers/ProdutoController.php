@@ -7,13 +7,23 @@ session_start();
 $controller = new ProdutoController();
 
 if (isset($_POST)) {
-    $controller->validate();
-
     if (isset($_POST['method'])) {
         if ($_POST['method'] == 'PATCH') {
+            $controller->validate();
+
             return $controller->update();
         }
+
+        if ($_POST['method'] == 'DELETE') {
+            return $controller->delete($_GET['produto']);
+        }
+
+        if ($_POST['method'] == 'RESTORE') {
+            return $controller->restore($_GET['produto']);
+        }
     }
+
+    $controller->validate();
 
     return $controller->create();
 }
@@ -53,10 +63,6 @@ class ProdutoController {
         return $produtos;
     }
 
-    public function show() {
-
-    }
-
     public function create() {
         $produto = new Produto(
             $_POST['descricao'],
@@ -87,12 +93,20 @@ class ProdutoController {
         header("Location: {$_SERVER['HTTP_REFERER']}");
     }
 
-    public function delete() {
+    public function delete($id) {
+        Produto::delete($id);
 
+        $_SESSION['success'] = true;
+
+        header("Location: {$_SERVER['HTTP_REFERER']}");
     }
 
-    public function restore() {
+    public function restore($id) {
+        Produto::restore($id);
 
+        $_SESSION['success'] = true;
+
+        header("Location: {$_SERVER['HTTP_REFERER']}");
     }
 }
 
